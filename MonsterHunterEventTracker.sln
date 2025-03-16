@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonsterHunterEventTracker", "MonsterHunterEventTracker.csproj", "{3D2ACF23-0D2D-598E-3BAE-1DF890FC7DCE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D2ACF23-0D2D-598E-3BAE-1DF890FC7DCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2ACF23-0D2D-598E-3BAE-1DF890FC7DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2ACF23-0D2D-598E-3BAE-1DF890FC7DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2ACF23-0D2D-598E-3BAE-1DF890FC7DCE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC6B5CCE-3882-4D4C-A0A7-8A2165E0EA52}
+	EndGlobalSection
+EndGlobal
