@@ -18,66 +18,90 @@ namespace Helpers {
         public static async Task<T> GetEventMessage<T>(int week) where T: IMessageProperties, new() {
             try {
                 // download the page as html and save as image
-                var myEvents = getCurrentEvents(week);
-                
+                var myEvent = getCurrentEvents(week);
+
                 var message = CreateMessage<T>();
-                var tableRows = myEvents.QuerySelectorAll("tr");
 
-                for(int i = 1; i < tableRows.Count(); i++) {
-                    var eventImage = myEvents.QuerySelector($"table > tbody > tr:nth-child({i}) > td.image > img").GetAttributeValue("src","");
-                    var eventTitle = myEvents.QuerySelector($"table > tbody > tr:nth-child({i}) > td.quest > div > span").InnerText;
-                    var eventDescription = myEvents.QuerySelector($"table > tbody > tr:nth-child({i}) > td.quest > p.txt").InnerText;
-                    var eventDifficulty = myEvents.QuerySelector($"table > tbody > tr:nth-child({i}) > td.level > span").InnerText;
-                    var questInfoFieldNames = myEvents.QuerySelectorAll($"table > tbody > tr:nth-child({i}) > td.overview > ul > li > span.overview_dt");
-                    var questInfoFieldValues = myEvents.QuerySelectorAll($"table > tbody > tr:nth-child({i}) > td.overview > ul > li > span.overview_dd");
+                if (IsEventPosted(myEvent)) {
+                    
+                    var tableRows = myEvent.QuerySelectorAll("tr");
 
-                    var fileName = $"event{i}week{week}.png";
+                    for(int i = 1; i < tableRows.Count(); i++) {
+                        var eventImage = myEvent.QuerySelector($"table > tbody > tr:nth-child({i}) > td.image > img").GetAttributeValue("src","");
+                        var eventTitle = myEvent.QuerySelector($"table > tbody > tr:nth-child({i}) > td.quest > div > span").InnerText;
+                        var eventDescription = myEvent.QuerySelector($"table > tbody > tr:nth-child({i}) > td.quest > p.txt").InnerText;
+                        var eventDifficulty = myEvent.QuerySelector($"table > tbody > tr:nth-child({i}) > td.level > span").InnerText;
+                        var questInfoFieldNames = myEvent.QuerySelectorAll($"table > tbody > tr:nth-child({i}) > td.overview > ul > li > span.overview_dt");
+                        var questInfoFieldValues = myEvent.QuerySelectorAll($"table > tbody > tr:nth-child({i}) > td.overview > ul > li > span.overview_dd");
 
-                    await downloadImage(eventImage, fileName);
+                        var fileName = $"event{i}week{week}.png";
 
+                        await downloadImage(eventImage, fileName);
+
+                        var embed = new EmbedProperties()
+                        {
+                            Title = "Monster Hunter Event Quest: " + eventTitle,
+                            Description = eventDescription,
+                            Url =$"https://info.monsterhunter.com/wilds/event-quest/en-us/schedule?={i}", // must be unique for multiple embeds
+                            Timestamp = DateTimeOffset.UtcNow,
+                            Color = new(0xFFA500),
+                            Footer = new()
+                            {
+                                Text = "Happy Hunting!!"
+                            },
+                            Image = $"attachment://{fileName}",
+                            Fields =
+                            [
+                                new()
+                                {
+                                    Name = "Difficulty",
+                                    Value = eventDifficulty,
+                                    Inline = true,
+                                },
+                            ],
+                        };
+
+                        for(int j = 0; j < questInfoFieldNames.Count(); j++) {
+                            var field = new EmbedFieldProperties();
+                            field.Name = questInfoFieldNames[j].InnerText.Trim().TrimStart(':');
+                            field.Value = questInfoFieldValues[j].InnerText.Trim().TrimStart(':');
+
+                            // if we find the date field, lets format it
+                            if (field.Name.Contains("Date")) {
+                                var temp = DateTime.ParseExact(field.Value, "MM.dd.yyyy HH:mm", CultureInfo.InvariantCulture);
+                                field.Value = temp.ToString("MM/dd/yy h:mm tt");
+                            }
+
+                            field.Inline = true;
+                            embed.AddFields(field);
+                        }
+
+                        var attachment = new AttachmentProperties(fileName, new MemoryStream(File.ReadAllBytes("images/" + fileName)));
+                        message.AddAttachments(attachment);
+                        message.AddEmbeds(embed);
+                    }
+                } else {
+                    // else, we need to just display "comming soon"
                     var embed = new EmbedProperties()
                     {
-                        Title = "Monster Hunter Event Quest: " + eventTitle,
-                        Description = eventDescription,
-                        Url =$"https://info.monsterhunter.com/wilds/event-quest/en-us/schedule?={i}", // must be unique for multiple embeds
+                        Title = "Coming Soon",
+                        Description = "The event quest has not been posted yet, try again later!",
+                        Url =$"https://info.monsterhunter.com/wilds/event-quest/en-us/schedule",
                         Timestamp = DateTimeOffset.UtcNow,
                         Color = new(0xFFA500),
                         Footer = new()
                         {
                             Text = "Happy Hunting!!"
                         },
-                        Image = $"attachment://{fileName}",
-                        Fields =
-                        [
-                            new()
-                            {
-                                Name = "Difficulty",
-                                Value = eventDifficulty,
-                                Inline = true,
-                            },
-                        ],
+                        Image = $"attachment://comingsoon.png",
                     };
 
-                    for(int j = 0; j < questInfoFieldNames.Count(); j++) {
-                        var field = new EmbedFieldProperties();
-                        field.Name = questInfoFieldNames[j].InnerText.Trim().TrimStart(':');
-                        field.Value = questInfoFieldValues[j].InnerText.Trim().TrimStart(':');
-
-                        // if we find the date field, lets format it
-                        if (field.Name.Contains("Date")) {
-                            var temp = DateTime.ParseExact(field.Value, "MM.dd.yyyy HH:mm", CultureInfo.InvariantCulture);
-                            field.Value = temp.ToString("MM/dd/yy h:mm tt");
-                        }
-
-                        field.Inline = true;
-                        embed.AddFields(field);
-                    }
-
-                    var attachment = new AttachmentProperties(fileName, new MemoryStream(File.ReadAllBytes("images/" + fileName)));
+                    var attachment = new AttachmentProperties("comingsoon.png", new MemoryStream(File.ReadAllBytes("images/comingsoon.png")));
                     message.AddAttachments(attachment);
                     message.AddEmbeds(embed);
                 }
-
+                
+                // either the embedded quests or a single embed with the comming soon image
                 return message;
             }
             catch
@@ -128,6 +152,15 @@ namespace Helpers {
         public static string GetRoleFromId(string roleId)
         {
             return $"<@&{roleId}>";
+        }
+
+        // Sometimes the latest info says "Coming Soon" instead of an actual post, so lets look for it
+        public static bool IsEventPosted(HtmlNode? myEvent){
+            if (myEvent == null) return false;
+
+            var commingSoonText = myEvent.QuerySelector(".coming-quest_inner");
+
+            return commingSoonText == null;
         }
     }
 }
