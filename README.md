@@ -30,3 +30,13 @@ Right now its pretty specific to my discord group so you may need to tweak it a 
 
 I probably wont make this publically available as a bot (copyright and what not) but you are more than welcome to steal my code and take a peek at what you will need. I am excluding the appsettings.json, which if you read the tutorial on [NetCord](https://netcord.dev/), they will show you how to set it up.  I used vscode to run this (hence the .vscode folder) with the c# extension installed.  Then just run it like a console exe.  Happy Hunting!!!
 
+Tips are appreciated but never required:
+
+[![Tip Button]][Link]
+
+<!----------------------------------------------------------------------------->
+[Link]: https://www.paypal.com/donate/?business=2PPTMXPJWQCE4&no_recurring=0&item_name=Small+tip+is+appreciated+%3A%29&currency_code=USD
+<!---------------------------------[ Buttons ]--------------------------------->
+[Tip Button]: https://img.shields.io/badge/Tips_Appreciated-37a779?style=for-the-badge
+
+
