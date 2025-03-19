@@ -15,6 +15,7 @@ This bot is a web scraper that parses the [official monster hunter wilds event q
 ### Available Commands:
 
 | Slash Command | Description |
+| -------- | ------- |
 | /checkevents | Checks the current event for the current week, these events run from 7pm cst to 6:59pm cst on Tuesdays, it will spit out an embeded message per event quest that is available (see below for an example) |
 | /checknextweekevent | Checks the NEXT weeks event and spits out nice embed messages |
 | /checkweekafternextevent | You guessed it, checks 2 weeks ahead for the event quest details |
