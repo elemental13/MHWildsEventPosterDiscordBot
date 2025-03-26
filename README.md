@@ -1,6 +1,6 @@
 # MHWilds Single Run Poster
 
-This is meant to run on windows task scheuduler one time, scheduled at 7:01 pm to post the latest monster hunter event quest.
+This is meant to run on windows task scheuduler one time, scheduled at 7:01 pm to post the latest monster hunter event quest.  It will also parse and post the new challenge quests from the Title 1 update!!
 
 This was built using [NetCord](https://netcord.dev/), I highly advise taking a look at that site for some cool examples.  They dont show you EXACTLY where to place things to get them to work, but I do a pretty good job here with some simple examples.
 
