@@ -1,0 +1,1 @@
+xcopy /s ".\bin\Release\net9.0\win-x64\publish\" "C:\Users\darkn\OneDrive\Documents\CustomTasks\MonsterHunterDiscordBot\"

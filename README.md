@@ -1,6 +1,6 @@
-# MHWildsEventDiscordBot
+# MHWilds Single Run Poster
 
-This repo is a monster hunter wilds discord bot that will track events and auto send updates every Tuesday (CST) to alert you of the latest events going on.  It can also check next weeks events as well as the week after.  Event information is parsed from the official website here: https://info.monsterhunter.com/wilds/event-quest/en-us/schedule
+This is meant to run on windows task scheuduler one time, scheduled at 7:01 pm to post the latest monster hunter event quest.
 
 This was built using [NetCord](https://netcord.dev/), I highly advise taking a look at that site for some cool examples.  They dont show you EXACTLY where to place things to get them to work, but I do a pretty good job here with some simple examples.
 
@@ -10,15 +10,7 @@ This is a discord bot just built for fun and to create a helpful reminder for my
 
 ## Description
 
-This bot is a web scraper that parses the [official monster hunter wilds event quest site](https://info.monsterhunter.com/wilds/event-quest/en-us/schedule) and formats it into nice to read embed messages in discord.  It will download any images it needs to attach them properly and currently it has 3 commands and a background hosted service that will try to delay and wait until 7pm cst Tuesday in which the new events should be updated.
-
-### Available Commands:
-
-| Slash Command | Description |
-| -------- | ------- |
-| /checkevents | Checks the current event for the current week, these events run from 7pm cst to 6:59pm cst on Tuesdays, it will spit out an embeded message per event quest that is available (see below for an example) |
-| /checknextweekevent | Checks the NEXT weeks event and spits out nice embed messages |
-| /checkweekafternextevent | You guessed it, checks 2 weeks ahead for the event quest details |
+This bot is a web scraper that parses the [official monster hunter wilds event quest site](https://info.monsterhunter.com/wilds/event-quest/en-us/schedule) and formats it into nice to read embed messages in discord.  It will download any images it needs to attach them properly.
 
 #### Example: 
 

@@ -9,7 +9,7 @@
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
-        "program": "${workspaceFolder}/bin/Debug/net9.0/win-x64/MonsterHunterEventTracker.dll",
+        "program": "${workspaceFolder}/bin/Debug/net9.0/win-x64/MHWildsEventPoster.dll",
         "args": [],
         "cwd": "${workspaceFolder}",
         "stopAtEntry": false,
