@@ -15,12 +15,22 @@ namespace Helpers {
             };
         }
 
-        public static async Task<T> GetEventMessage<T>(int week) where T: IMessageProperties, new() {
+        /// <summary>
+        /// Get the current monster hunter events! A list of messages returns as each message can only have 10 embeds. So we will group the messages by 10 monster hunter
+        /// events each.  This is for when monster hunter does the special celebrations and brings back old events.
+        /// </summary>
+        /// <typeparam name="T">Type of message, like InteractionMessage</typeparam>
+        /// <param name="week">Which week you would like to collect events from (0 based). Monster hunter holds 3 weeks of events total on the site.</param>
+        /// <returns></returns>
+        public static async Task<List<T>> GetEventMessageList<T>(int week) where T: IMessageProperties, new() {
             try {
                 // download the page as html and save as image
                 var myEvent = getCurrentEvents(week);
 
                 var message = CreateMessage<T>();
+
+                // making a message list to group them with 10 embeds each to account for discord's limitations
+                var messageList = new List<T>();
 
                 if (IsEventPosted(myEvent)) {
                     
@@ -77,8 +87,19 @@ namespace Helpers {
                         }
 
                         var attachment = new AttachmentProperties(fileName, new MemoryStream(File.ReadAllBytes("images/" + fileName)));
-                        message.AddAttachments(attachment);
-                        message.AddEmbeds(embed);
+                        message?.AddAttachments(attachment);
+                        message?.AddEmbeds(embed);
+                        
+                        // every 10 messages, add it to the list and start over
+                        if (message != null && message.Embeds?.Count() % 10 == 0) {
+                            messageList.Add(message);
+                            message = CreateMessage<T>();
+                        }
+
+                        // if we are on the last item and its not divisible by 10, add it anyway
+                        if (message != null && i == tableRows.Count() - 1) {
+                            messageList.Add(message);
+                        }
                     }
                 } else {
                     // else, we need to just display "comming soon"
@@ -99,25 +120,33 @@ namespace Helpers {
                     var attachment = new AttachmentProperties("comingsoon.png", new MemoryStream(File.ReadAllBytes("images/comingsoon.png")));
                     message.AddAttachments(attachment);
                     message.AddEmbeds(embed);
+                    messageList.Add(message);
                 }
-                
+
                 // either the embedded quests or a single embed with the comming soon image
-                return message;
+                return messageList;
             }
             catch
             {
                 var message = CreateMessage<T>();
                 message.Content = "Sorry, request failed! Try again later!";
-                return message;
+                var messageList = new List<T>
+                {
+                    message
+                };
+                return messageList;
             }
         }
 
-        public static async Task<T> GetChallengeMessage<T>(int week) where T: IMessageProperties, new() {
+        public static async Task<List<T>> GetChallengeMessageList<T>(int week) where T: IMessageProperties, new() {
             try {
                 // download the page as html and save as image
                 var myChallenge = getCurrentChallenges(week);
 
                 var message = CreateMessage<T>();
+
+                // making a message list to group them with 10 embeds each to account for discord's limitations
+                var messageList = new List<T>();
 
                 if (IsChallengeComingSoon(myChallenge)) {
                     
@@ -174,8 +203,19 @@ namespace Helpers {
                         }
 
                         var attachment = new AttachmentProperties(fileName, new MemoryStream(File.ReadAllBytes("images/" + fileName)));
-                        message.AddAttachments(attachment);
-                        message.AddEmbeds(embed);
+                        message?.AddAttachments(attachment);
+                        message?.AddEmbeds(embed);
+
+                        // every 10 messages, add it to the list and start over
+                        if (message != null && message.Embeds?.Count() % 10 == 0) {
+                            messageList.Add(message);
+                            message = CreateMessage<T>(); // clear so the loop can keep adding new messages
+                        }
+
+                        // if we are on the last item and its not divisible by 10, add it anyway
+                        if (message != null && i == tableRows.Count() - 1) {
+                            messageList.Add(message);
+                        }
                     }
                 } else if (myChallenge != null) {
                     // else, we need to just display "comming soon"
@@ -196,16 +236,21 @@ namespace Helpers {
                     var attachment = new AttachmentProperties("comingsoon.png", new MemoryStream(File.ReadAllBytes("images/comingsoon.png")));
                     message.AddAttachments(attachment);
                     message.AddEmbeds(embed);
+                    messageList.Add(message);
                 }
                 
                 // either the embedded quests or a single embed with the comming soon image
-                return message;
+                return messageList;
             }
             catch
             {
                 var message = CreateMessage<T>();
                 message.Content = "Sorry, request failed! Try again later!";
-                return message;
+                var messageList = new List<T>
+                {
+                    message
+                };
+                return messageList;
             }
         }
 

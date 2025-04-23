@@ -12,6 +12,8 @@ namespace Services {
         private IHostApplicationLifetime _applicationLifetime;
 
         private string monsterHunterEventNewsRoleId = "1350311731662164059";
+
+        private ulong monsterHunterChannelId = 1350146109024112721;
         public WeeklyTriggerService(ILogger<WeeklyTriggerService> logger, IHostApplicationLifetime applicationLifetime, RestClient client)
         {
             _logger = logger;
@@ -24,20 +26,29 @@ namespace Services {
             // starting with a greeting
             var greetingMessage = MessageHelper.CreateMessage<MessageProperties>();
             greetingMessage.Content =$"{MessageHelper.GetRoleFromId(monsterHunterEventNewsRoleId)} New Event Quests Starting!!";
-            await _client.SendMessageAsync(1350146109024112721, greetingMessage, null, stoppingToken);
+            await _client.SendMessageAsync(monsterHunterChannelId, greetingMessage, null, stoppingToken);
             // collect new events and send
-            // generate the message
-            var message = await MessageHelper.GetEventMessage<MessageProperties>(0);
-            // generate the challenge message
-            var message2 = await MessageHelper.GetChallengeMessage<MessageProperties>(0);
+            // generate the message list
+            var messageList = await MessageHelper.GetEventMessageList<MessageProperties>(0);
+            // generate the challenge message list
+            var challengeList = await MessageHelper.GetChallengeMessageList<MessageProperties>(0);
 
-            // add the challenge messages to the first one to send just one message together
-            if (message2?.Embeds?.Count() > 0) {
-                message.AddEmbeds(message2.Embeds);
-                if (message2.Attachments != null) message.AddAttachments(message2.Attachments);
+            try {
+                // could be multiple messages with groups of 10 embeds for discord limitations
+                foreach(var message in messageList ?? new List<MessageProperties>()) {
+                    await _client.SendMessageAsync(monsterHunterChannelId, message, null, stoppingToken);
+                }
+
+                // could be multiple messages with groups of 10 embeds for discord limitations
+                foreach(var challenge in challengeList ?? new List<MessageProperties>()) {
+                    await _client.SendMessageAsync(monsterHunterChannelId, challenge, null, stoppingToken);
+                }
+            } catch (Exception ex) {
+                var errorMessage = MessageHelper.CreateMessage<MessageProperties>();
+                errorMessage.Content = "Sorry, something went wrong!!";
+                _logger.LogError(ex, ex.Message);
+                await _client.SendMessageAsync(monsterHunterChannelId, errorMessage, null, stoppingToken);
             }
-
-            await _client.SendMessageAsync(1350146109024112721, message, null, stoppingToken);
 
             // after we send our message, lets close the application
             _applicationLifetime.StopApplication();
